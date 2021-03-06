@@ -92,6 +92,13 @@ NS_SWIFT_NAME(jpegCompressionQuality);
 @property (class, nonatomic, assign, getter=isAutoLogAppEventsEnabled) BOOL autoLogAppEventsEnabled;
 
 /**
+ Controls the collection of anonymous ID to Facebook servers. For certain privacy reasons,
+ it might be required to set this to false.
+ If not explicitly set, the default is true
+ */
+@property (class, nonatomic, assign, getter=isAnonymousIDCollectionEnabled) BOOL anonymousIDCollectionEnabled;
+
+/**
  Controls the fb_codeless_debug logging event
  If not explicitly set, the default is true
  */
