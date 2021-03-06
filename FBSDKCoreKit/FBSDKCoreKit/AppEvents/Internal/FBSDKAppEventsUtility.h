@@ -62,4 +62,6 @@ NS_SWIFT_NAME(AppEventsUtility)
 + (BOOL)isStandardEvent:(NSString *)event;
 + (long)convertToUnixTime:(NSDate *)date;
 
++ (BOOL)_trackingEnabled;
+
 @end

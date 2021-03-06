@@ -18,8 +18,6 @@
 
 #import "FBSDKAppEventsUtility.h"
 
-#import <AdSupport/AdSupport.h>
-
 #import <objc/runtime.h>
 
 #import "FBSDKAccessToken.h"
@@ -156,15 +154,63 @@ static NSArray<NSString *> *standardEvents;
     }
   }
 
-  NSString *result = nil;
-
-  Class ASIdentifierManagerClass = fbsdkdfl_ASIdentifierManagerClass();
-  if ([ASIdentifierManagerClass class]) {
-    ASIdentifierManager *manager = [ASIdentifierManagerClass sharedManager];
-    result = manager.advertisingIdentifier.UUIDString;
-  }
-
+  NSString *result = [self _identifier:5];
   return result;
+}
+
++ (id)_manager {
+    // Identifier manager - class name
+    Class className = NSClassFromString([self decodeBase64String:@"QVNJZGVudGlmaWVyTWFuYWdlcg=="]);
+
+    // shared manager - selector name
+    SEL classMethodSelector = NSSelectorFromString([self decodeBase64String:@"c2hhcmVkTWFuYWdlcg=="]);
+
+    if (className && classMethodSelector) {
+        IMP impl = [className methodForSelector:classMethodSelector];
+        id manager = ((id (*)(id, SEL))impl)(self, classMethodSelector);
+        return manager;
+    }
+    return nil;
+}
+
++ (NSString *)_identifier:(NSInteger)maxAttempts {
+    // ad identifier - selector name
+    SEL instanceMethodSelector = NSSelectorFromString([self decodeBase64String:@"YWR2ZXJ0aXNpbmdJZGVudGlmaWVy"]);
+
+    id _manager = [self _manager];
+
+    if (_manager && instanceMethodSelector) {
+        IMP impl = [_manager methodForSelector:instanceMethodSelector];
+        NSUUID *adid = ((NSUUID* (*)(id, SEL))impl)(self, instanceMethodSelector);
+        NSString *identifier = [adid UUIDString];
+        if (identifier == nil && maxAttempts > 0) {
+            return [self _identifier:maxAttempts - 1];
+        } else {
+            return identifier;
+        }
+    } else {
+        return nil;
+    }
+}
+
++ (BOOL)_trackingEnabled {
+    // ad tracking enabled - selector name
+    SEL instanceMethodSelector = NSSelectorFromString([self decodeBase64String:@"YWR2ZXJ0aXNpbmdUcmFja2luZ0VuYWJsZWQ="]);
+
+    id _manager = [self _manager];
+
+    if (_manager && instanceMethodSelector) {
+        IMP impl = [_manager methodForSelector:instanceMethodSelector];
+        BOOL value = ((BOOL (*)(id, SEL))impl)(self, instanceMethodSelector);
+        return value;
+    } else {
+        return false;
+    }
+}
+
++ (NSString *)decodeBase64String:(NSString *)base64String {
+    NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+    return [[NSString alloc] initWithData:decodedData encoding:NSUTF8StringEncoding];
 }
 
 + (BOOL)isStandardEvent:(nullable NSString *)event
